@@ -14,15 +14,16 @@ COPY "mysql-connector-java-5.1.39-bin.jar" "/"
 # directory structure.
 RUN set -x \
     && apt-get update --quiet \
+    && apt-get install --quiet --yes vim locales ttf-wqy-zenhei \
     && apt-get install --quiet --yes --no-install-recommends libtcnative-1 xmlstarlet \
     && apt-get clean \
     && mkdir -p                "${CONF_HOME}" \
     && chmod -R 700            "${CONF_HOME}" \
     && chown daemon:daemon     "${CONF_HOME}" \
     && mkdir -p                "${CONF_INSTALL}/conf" \
-    && curl -Ls                "https://www.atlassian.com/software/confluence/downloads/binary/atlassian-confluence-${CONF_VERSION}.tar.gz" | tar -xz --directory "${CONF_IN
-STALL}" --strip-components=1 --no-same-owner \    && curl -Ls                "https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-5.1.38.tar.gz" | tar -xz --directory "${CONF_INSTALL}/confluence/WEB-IN
-F/lib" --strip-components=1 --no-same-owner "mysql-connector-java-5.1.38/mysql-connector-java-5.1.38-bin.jar" \    && \mv                     "/atlassian-extras-decoder-v2-3.2.jar" "/opt/atlassian/confluence/confluence/WEB-INF/lib/" \
+    && curl -Ls                "https://www.atlassian.com/software/confluence/downloads/binary/atlassian-confluence-${CONF_VERSION}.tar.gz" | tar -xz --directory "${CONF_INSTALL}" --strip-components=1 --no-same-owner \
+    && curl -Ls                "https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-5.1.38.tar.gz" | tar -xz --directory "${CONF_INSTALL}/confluence/WEB-INF/lib" --strip-components=1 --no-same-owner "mysql-connector-java-5.1.38/mysql-connector-java-5.1.38-bin.jar" \
+    && \mv                     "/atlassian-extras-decoder-v2-3.2.jar" "/opt/atlassian/confluence/confluence/WEB-INF/lib/" \
     && \mv                     "/atlassian-universal-plugin-manager-plugin-2.22.1.jar" "/opt/atlassian/confluence/confluence/WEB-INF/atlassian-bundled-plugins/" \
     && \mv                     "/mysql-connector-java-5.1.39-bin.jar" "/opt/atlassian/confluence/confluence/WEB-INF/lib/" \
     && sed -i                  '/CATALINA_OPTS/s/Xms1024m/Xms2048m/g' /opt/atlassian/confluence/bin/setenv.sh \
@@ -46,7 +47,8 @@ F/lib" --strip-components=1 --no-same-owner "mysql-connector-java-5.1.38/mysql-c
         --delete               "Server/Service/Engine/Host/@debug" \
         --delete               "Server/Service/Engine/Host/Context/@debug" \
                                "${CONF_INSTALL}/conf/server.xml" \
-    && touch -d "@0"           "${CONF_INSTALL}/conf/server.xml"
+    && touch -d "@0"           "${CONF_INSTALL}/conf/server.xml" \
+    && chmod +x "/docker-entrypoint.sh"
 
 # Use the default unprivileged account. This could be considered bad practice
 # on systems where multiple processes end up being executed by 'daemon' but
