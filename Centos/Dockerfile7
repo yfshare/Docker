@@ -27,5 +27,6 @@ RUN set -x \
 && wget -O /etc/yum.repos.d/epel.repo http://mirrors.aliyun.com/repo/epel-7.repo \
 && yum clean all
 
+EXPOSE 22
 VOLUME [ "/sys/fs/cgroup" ]
 CMD ["/usr/sbin/init"]
