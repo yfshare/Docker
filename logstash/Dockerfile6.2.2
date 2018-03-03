@@ -1,0 +1,24 @@
+FROM yfshare/centos:7
+MAINTAINER yfshare
+
+COPY "java.sh" "/etc/profile.d/"
+COPY "docker-entrypoint.sh" "/"
+COPY "jdk-8u152-linux-x64.tar.gz" "/tmp"
+COPY "logstash.conf" "/"
+
+RUN set -x \
+  && yum install -y https://artifacts.elastic.co/downloads/logstash/logstash-6.2.2.rpm \
+  && yum clean all \
+  && tar -zxf /tmp/jdk-8u152-linux-x64.tar.gz -C /usr/local/ \
+  && source /etc/profile.d/java.sh \
+  && ln -s /usr/local/jdk1.8.0_152/bin/java /usr/bin/ \
+  && rm -rf /tmp/jdk-8u144-linux-x64.tar.gz \
+  && mkdir -p "/data/logstash/data/" \
+  && mkdir -p "/etc/logstash/conf.d/" \
+  && mv "/logstash.conf" "/etc/logstash/conf.d/" \
+  && chmod +x "/docker-entrypoint.sh"
+
+VOLUME [ "/data/logstash" ]
+EXPOSE 5044
+
+ENTRYPOINT /docker-entrypoint.sh
