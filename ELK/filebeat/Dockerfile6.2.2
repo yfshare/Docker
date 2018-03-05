@@ -1,0 +1,16 @@
+FROM yfshare/centos:7
+MAINTAINER yfshare
+
+COPY "java.sh" "/etc/profile.d/"
+COPY "docker-entrypoint.sh" "/"
+COPY "jdk-8u152-linux-x64.tar.gz" "/tmp"
+
+RUN set -x \
+  && yum install -y https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-6.2.2-x86_64.rpm \
+  && yum clean all \
+  && tar -zxf /tmp/jdk-8u152-linux-x64.tar.gz -C /usr/local/ \
+  && source /etc/profile.d/java.sh \
+  && rm -rf /tmp/jdk-8u144-linux-x64.tar.gz \
+  && chmod +x "/docker-entrypoint.sh"
+
+ENTRYPOINT /docker-entrypoint.sh
