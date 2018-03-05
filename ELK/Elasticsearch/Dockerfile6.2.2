@@ -1,0 +1,28 @@
+FROM yfshare/centos:7
+MAINTAINER yfshare
+
+COPY "java.sh" "/etc/profile.d/"
+COPY "jdk-8u152-linux-x64.tar.gz" "/tmp"
+COPY "elasticsearch.conf" "/etc/elasticsearch/elasticsearch.conf"
+COPY "elasticsearch.sh" "/etc/init.d/elasticsearch.sh"
+COPY "init-functions" "/lib/lsb/init-functions"
+COPY "start-stop-daemon" "/sbin/start-stop-daemon"
+COPY "docker-entrypoint.sh" "/docker-entrypoint.sh"
+
+RUN set -x \
+  && yum install -y https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-6.2.2.rpm \
+  && yum clean all \
+  && tar -zxf /tmp/jdk-8u152-linux-x64.tar.gz -C /usr/local/ \
+  && source /etc/profile.d/java.sh \
+  && ln -s /usr/local/jdk1.8.0_152/bin/java /usr/bin/ \
+  && rm -rf /tmp/jdk-8u144-linux-x64.tar.gz \
+  && mkdir -p "/data/elasticsearch/data/" \
+  && mkdir -p "/data/elasticsearch/logs/" \
+  && chown elasticsearch:elasticsearch /data/ -R \
+  && chmod +x "/etc/init.d/elasticsearch.sh" \
+  && chmod +x "/sbin/start-stop-daemon"
+
+VOLUME [ "/data/elasticsearch/" ]
+EXPOSE 9200 9300
+
+ENTRYPOINT sh /docker-entrypoint.sh
