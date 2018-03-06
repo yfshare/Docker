@@ -18,7 +18,6 @@ RUN set -x \
   && rm -rf /tmp/jdk-8u144-linux-x64.tar.gz \
   && mkdir -p "/data/elasticsearch/data/" \
   && mkdir -p "/data/elasticsearch/logs/" \
-  && chown elasticsearch:elasticsearch /data/ -R \
   && chmod +x "/etc/init.d/elasticsearch.sh" \
   && chmod +x "/sbin/start-stop-daemon"
 
