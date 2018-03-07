@@ -2,8 +2,12 @@
 
 ELK版本为6.2.2，filebeat版本为6.2.2  
 
+```bash
 docker-compose -f elk-compose.yml up -d
+```
+```bash
 docker-compose -f filebeat-compose.yml up -d
+```
 部署后，在kibana添加索引后即可读取nginx日志  
 
 ```bash
