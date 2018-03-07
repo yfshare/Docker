@@ -1,0 +1,3 @@
+此目录存储基于docker容器部署的Logstash配置文件
+
+Logstash版本为6.2.2
