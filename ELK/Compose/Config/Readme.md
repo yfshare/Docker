@@ -6,6 +6,7 @@ docker-compose -f elk-compose.yml up -d
 docker-compose -f filebeat-compose.yml up -d
 部署后，在kibana添加索引后即可读取nginx日志  
 
+```bash
 [root@localhost elk]# tree .
 .
 ├── elasticsearch
@@ -28,3 +29,4 @@ docker-compose -f filebeat-compose.yml up -d
 
 5 directories, 12 files
 [root@localhost elk]#
+```
