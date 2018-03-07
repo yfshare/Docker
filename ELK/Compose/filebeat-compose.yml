@@ -1,0 +1,9 @@
+version: '2'
+services:
+  filebeat:
+    image: yfshare/filebeat:6.2.2
+    container_name: filebeat
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /root/elk/filebeat/filebeat.yml:/etc/filebeat/filebeat.yml:ro
+      - /data/elk/filebeat/:/data/
