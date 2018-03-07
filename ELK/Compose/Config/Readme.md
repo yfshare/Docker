@@ -34,3 +34,4 @@ docker-compose -f filebeat-compose.yml up -d
 5 directories, 12 files
 [root@localhost elk]#
 ```
+![kibana_dashboard](https://note.youdao.com/yws/api/personal/file/136C15FA432A4CD89F9077ABB2AAE78E?method=download&shareKey=1c09c3810454666bb399d2d8405d3291)
