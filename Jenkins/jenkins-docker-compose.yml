@@ -1,0 +1,13 @@
+version: '3'
+services:
+  jenkins:
+    image: yfshare/jenkins:2.124
+    container_name: jenkins
+    ports:
+      - 8080:8080
+      - 50000:50000
+    volumes:
+      - /data/docker_mount/jenkins_home:/var/jenkins_home
+      - /data/docker_mount/maven_repository:/data/maven/repository
+      - /etc/localtime:/etc/localtime:ro
+    restart: always
