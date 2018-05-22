@@ -1,0 +1,26 @@
+FROM jenkins/jenkins:latest
+MAINTAINER  yfshare
+
+COPY "apache-maven-3.5.3-bin.tar.gz" "/"
+COPY "jenkins.sh" "/usr/local/bin/"
+COPY "maven.sh" "/etc/profile.d/"
+
+USER root
+RUN set -x \
+    && apt-get update \
+    && apt-get install -y vim ntpdate \
+    && tar -zxf "/apache-maven-3.5.3-bin.tar.gz" \
+    && mv "/apache-maven-3.5.3" "/usr/local/maven" \
+    && rm -rf "/apache-maven-3.5.3-bin.tar.gz" \
+    && ln -s /usr/local/maven/bin/mvn /usr/local/bin/ \
+    && sed -i '/<\/settings>/i\<localRepository\>\/data\/maven\/repository\<\/localRepository\>' /usr/local/maven/conf/settings.xml \
+    && mkdir -p /data/maven/repository
+
+USER jenkins
+
+VOLUME ["/var/jenkins_home"]
+VOLUME ["/data/maven/repository"]
+
+EXPOSE 8080 50000
+
+ENTRYPOINT ["/sbin/tini", "--", "/usr/local/bin/jenkins.sh"]
