@@ -13,8 +13,8 @@ RUN set -x \
     && mv "/apache-maven-3.5.3" "/usr/local/maven" \
     && rm -rf "/apache-maven-3.5.3-bin.tar.gz" \
     && ln -s /usr/local/maven/bin/mvn /usr/local/bin/ \
-    && sed -i '/<\/settings>/i\<localRepository\>\/data\/maven\/repository\<\/localRepository\>' /usr/local/maven/conf/se
-ttings.xml \    && mkdir -p /data/maven/repository \
+    && sed -i '/<\/settings>/i\<localRepository\>\/data\/maven\/repository\<\/localRepository\>' /usr/local/maven/conf/settings.xml \
+    && mkdir -p /data/maven/repository \
     && chown -R jenkins:jenkins /data/maven/repository \
     && chown -R jenkins:jenkins /var/jenkins_home \
     && chown -R jenkins:jenkins /usr/local/maven \
