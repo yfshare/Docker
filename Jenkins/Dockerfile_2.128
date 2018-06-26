@@ -1,4 +1,21 @@
-FROM jenkins/jenkins:latest
+version: '3'
+services:
+  jenkins:
+    image: yfshare/jenkins:2.128
+    container_name: jenkins
+    ports:
+      - 8080:8080
+      - 50000:50000
+    hostname: jenkins.example.com
+    extra_hosts:
+      jenkins.example.com: 127.0.0.1
+    volumes:
+      - /data/docker_mount/jenkins_home:/var/jenkins_home
+      - /data/docker_mount/maven_repository:/data/maven/repository
+      - /etc/localtime:/etc/localtime:ro
+    restart: always
+[root@localhost ~]# cat build/Dockerfile 
+FROM jenkins/jenkins:2.128
 MAINTAINER  yfshare
 
 COPY "apache-maven-3.5.3-bin.tar.gz" "/"
@@ -13,16 +30,14 @@ RUN set -x \
     && mv "/apache-maven-3.5.3" "/usr/local/maven" \
     && rm -rf "/apache-maven-3.5.3-bin.tar.gz" \
     && ln -s /usr/local/maven/bin/mvn /usr/local/bin/ \
-    && sed -i '/<\/settings>/i\<localRepository\>\/data\/maven\/repository\<\/localRepository\>' /usr/local/maven/conf/settings.xml \
-    && mkdir -p /data/maven/repository \
-    && chown jenkins:jenkins /data/maven/repository \
-    && chown jenkins:jenkins /var/jenkins_home \
+    && sed -i '/<\/settings>/i\<localRepository\>\/data\/maven\/repository\<\/localRepository\>' /usr/local/maven/conf/se
+ttings.xml \    && mkdir -p /data/maven/repository \
+    && chown -R jenkins:jenkins /data/maven/repository \
+    && chown -R jenkins:jenkins /var/jenkins_home \
+    && chown -R jenkins:jenkins /usr/local/maven \
     && apt-get clean
 
-USER jenkins
-
-VOLUME ["/var/jenkins_home"]
-VOLUME ["/data/maven/repository"]
+VOLUME ["/var/jenkins_home","/data/maven/repository"]
 
 EXPOSE 8080 50000
 
