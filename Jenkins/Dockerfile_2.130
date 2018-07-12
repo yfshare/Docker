@@ -1,9 +1,12 @@
-FROM jenkins/jenkins:2.128
+FROM jenkins/jenkins:2.130
 MAINTAINER  yfshare
 
 COPY "apache-maven-3.5.3-bin.tar.gz" "/"
 COPY "jenkins.sh" "/usr/local/bin/"
 COPY "maven.sh" "/etc/profile.d/"
+
+ENV LANG en_US.UTF-8  
+ENV LANGUAGE en_US:en  
 
 USER root
 RUN set -x \
@@ -20,7 +23,7 @@ RUN set -x \
     && chown -R jenkins:jenkins /usr/local/maven \
     && apt-get clean
 
-VOLUME ["/var/jenkins_home","/data/maven/repository"]
+VOLUME ["/var/jenkins_home","/data/maven/repository","/usr/local/maven/conf"]
 
 EXPOSE 8080 50000
 
