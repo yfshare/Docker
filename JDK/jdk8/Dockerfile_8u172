@@ -1,0 +1,15 @@
+FROM yfshare/centos:7
+MAINTAINER  yfshare
+
+COPY "jdk-8u172-linux-x64.tar.gz" "/"
+COPY "java.sh" "/etc/profile.d/"
+
+USER root
+RUN set -x \
+    && yum install -y vim ntpdate net-tools \
+    && tar -zxf "/jdk-8u172-linux-x64.tar.gz" \
+    && mv "/jdk1.8.0_172" "/usr/local/jdk" \
+    && rm -rf "/jdk-8u172-linux-x64.tar.gz" \
+    && yum clean all
+
+CMD ["/usr/sbin/init"]
