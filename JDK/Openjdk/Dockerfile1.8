@@ -1,0 +1,9 @@
+FROM yfshare/centos:7
+MAINTAINER  yfshare
+
+USER root
+RUN set -x \
+    && yum install -y java-1.8.0-openjdk.x86_64 \
+    && yum clean all
+
+CMD ["/usr/sbin/init"]
