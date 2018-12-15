@@ -1,0 +1,16 @@
+FROM yfshare/centos:7.6
+MAINTAINER yfshare <www.yfshare.vip>
+
+COPY prometheus-2.5.0.linux-amd64.tar.gz /tmp
+
+RUN set -x \
+    && tar -zxf /tmp/prometheus-2.5.0.linux-amd64.tar.gz -C /tmp/ \
+    && mv /tmp/prometheus-2.5.0.linux-amd64 /usr/local/prometheus \
+    && rm -rf /tmp/prometheus-2.5.0.linux-amd64.tar.gz
+
+EXPOSE 9090
+VOLUME ["/usr/local/prometheus"]
+WORKDIR /usr/local/prometheus
+
+ENTRYPOINT [ "./prometheus" ]
+CMD [ "--config.file=prometheus.yml", "--web.enable-lifecycle" ]
