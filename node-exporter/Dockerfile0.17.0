@@ -1,0 +1,19 @@
+FROM yfshare/centos:7.6
+MAINTAINER yfshare <www.yfshare.vip>
+
+COPY node_exporter-0.17.0.linux-amd64.tar.gz /tmp
+
+RUN set -x \
+    && tar -zxf /tmp/node_exporter-0.17.0.linux-amd64.tar.gz -C /tmp/ \
+    && mv /tmp/node_exporter-0.17.0.linux-amd64 /usr/local/node_exporter \
+    && rm -rf /tmp/node_exporter-0.17.0.linux-amd64.tar.gz \
+    && mkdir -p /usr/local/node_exporter/keys/ \
+    && yum -y install vixie-cron crontabs \
+    && yum clean all
+
+EXPOSE 9100
+VOLUME ["/usr/local/node_exporter"]
+WORKDIR /usr/local/node_exporter
+
+ENTRYPOINT [ "./node_exporter" ]
+CMD [ "--web.listen-address=:9100","--collector.textfile.directory=/usr/local/node_exporter/keys/" ]
