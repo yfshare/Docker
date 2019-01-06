@@ -1,0 +1,20 @@
+FROM yfshare/centos:7.6
+MAINTAINER yfshare <www.yfshare.vip>
+
+COPY grafana-5.5.0-400a18e7pre1.x86_64.rpm /tmp
+COPY defaults.ini /tmp
+COPY docker-entrypoint.sh /
+
+RUN set -x \
+    && yum -y localinstall /tmp/grafana-5.5.0-400a18e7pre1.x86_64.rpm \
+    && yum clean all \
+    && mkdir -p /var/log/grafana \
+    && mv /tmp/defaults.ini /usr/share/grafana/conf/ \
+    && rm -rf /tmp/grafana-5.5.0-400a18e7pre1.x86_64.rpm \
+    && chmod +x /docker-entrypoint.sh
+
+EXPOSE 3000
+VOLUME ["/usr/share/grafana"]
+WORKDIR /usr/share/grafana
+
+ENTRYPOINT [ "/docker-entrypoint.sh" ]
