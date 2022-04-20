@@ -1,0 +1,40 @@
+FROM centos:centos7.9.2009
+MAINTAINER yfshare
+
+RUN (cd /lib/systemd/system/sysinit.target.wants/; for i in *; do [ $i == \
+systemd-tmpfiles-setup.service ] || rm -f $i; done); \
+rm -f /lib/systemd/system/multi-user.target.wants/*;\
+rm -f /etc/systemd/system/*.wants/*;\
+rm -f /lib/systemd/system/local-fs.target.wants/*; \
+rm -f /lib/systemd/system/sockets.target.wants/*udev*; \
+rm -f /lib/systemd/system/sockets.target.wants/*initctl*; \
+rm -f /lib/systemd/system/basic.target.wants/*;\
+rm -f /lib/systemd/system/anaconda.target.wants/*;
+
+ENV TZ=Asia/Shanghai
+ENV LANG en_US.UTF-8
+ENV LC_ALL en_US.UTF-8
+
+COPY Python-3.9.12.tar.xz go1.18.1.linux-amd64.tar.gz /opt/
+
+RUN set -x \
+&& ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone \
+&& yum -y install epel-release wget net-tools ntpdate gcc gcc-c++ libffi-devel make zlib* zlib-devel bzip2-devel openssl-devel openssh-server ncurses-devel sqlite-devel readline-devel tk-devel gdbm-devel db4-devel libpcap-devel xz-devel\
+&& ssh-keygen -q -N "" -t dsa -f /etc/ssh/ssh_host_dsa_key \
+&& ssh-keygen -q -N "" -t rsa -f /etc/ssh/ssh_host_rsa_key \
+&& sed -ri 's/session    required     pam_loginuid.so/#session    required     pam_loginuid.so/g' /etc/pam.d/sshd \
+&& mkdir -p /root/.ssh && chown root.root /root && chmod 700 /root/.ssh \
+&& echo 'root:e9We20Xd@9df' | chpasswd \
+&& wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo \
+&& wget -O /etc/yum.repos.d/epel.repo http://mirrors.aliyun.com/repo/epel-7.repo \
+&& cd /opt && tar -xf Python-3.9.12.tar.xz -C . \
+&& cd /opt/Python-3.9.12 && ./configure --prefix=/usr/local/python3.9 --with-ssl && make && make install \
+&& ln -s /usr/local/python3.9/bin/p* /usr/bin/ \
+&& pip3 install --upgrade pip && pip3 install awscli \
+&& tar -xf /opt/go1.18.1.linux-amd64.tar.gz -C /opt/ && mv /opt/go /usr/local/ && ln -s /usr/local/go/bin/go* /usr/bin/ \
+&& cd /opt/Python-3.9.12 && make clean all && rm -rf /opt/Python-3.9.12.tar.xz /opt/Python-3.9.12 /opt/go1.18.1.linux-amd64.tar.gz \
+&& yum clean all
+
+EXPOSE 22
+VOLUME [ "/sys/fs/cgroup" ]
+CMD ["/usr/sbin/init"]
